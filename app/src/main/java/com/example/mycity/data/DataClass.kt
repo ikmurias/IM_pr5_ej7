@@ -1,6 +1,7 @@
 package com.example.mycity.data
 
 import com.example.mycity.R
+import com.example.mycity.ui.Pantalla
 
 object DataClass {
 
@@ -20,6 +21,10 @@ object DataClass {
 
     fun actividadDefecto(): Actividad{
         return getActividades().filter { it.categoria == categoriaDefecto() }.first()
+    }
+
+    fun pantallaInicial(): Pantalla{
+        return Pantalla.Categorias
     }
 
     fun getActividades(): List<Actividad> {

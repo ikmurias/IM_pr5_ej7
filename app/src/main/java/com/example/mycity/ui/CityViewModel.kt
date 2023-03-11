@@ -8,14 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-class viewModel : ViewModel(){
+class CityViewModel : ViewModel(){
     private val _uiState = MutableStateFlow(
         uiState(
-            currentCategory = DataClass.categoriaDefecto()
+            currentCategory = DataClass.categoriaDefecto(),
+            actividadActual = DataClass.actividadDefecto(),
+            pantallaActual = DataClass.pantallaInicial()
         )
     )
 
-    var uiState: StateFlow<uiState> = _uiState
+    val uiState: StateFlow<uiState> = _uiState
 
     fun getActividades(): List<Actividad>{
         return DataClass.getActividades().filter {
@@ -23,6 +25,9 @@ class viewModel : ViewModel(){
         }
     }
 
+    fun getCategorias(): List<Categoria>{
+        return DataClass.categorias()
+    }
 
     fun cambiarActividad(actividad: Actividad){
         _uiState.update {
@@ -37,6 +42,12 @@ class viewModel : ViewModel(){
         _uiState.update {
             it.copy(currentCategory = categoria,
             pantallaActual = Pantalla.actividad)
+        }
+    }
+
+    fun irACategorias() {
+        _uiState.update {
+            it.copy(pantallaActual = Pantalla.Categorias)
         }
     }
 
