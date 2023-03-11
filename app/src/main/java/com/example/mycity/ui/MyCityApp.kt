@@ -185,5 +185,6 @@ fun showActividad(
         )
         Text(text = actividad.titulo, style = MaterialTheme.typography.h4)
         Text(text = actividad.categoria.nombre)
+        Text(text = actividad.descripcion)
     }
 }
