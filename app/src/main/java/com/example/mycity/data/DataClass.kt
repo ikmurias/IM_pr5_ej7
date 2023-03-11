@@ -7,10 +7,15 @@ object DataClass {
 
     fun categorias(): List<Categoria>{
         return listOf<Categoria>(
-            Categoria(0,
+            Categoria(
             nombre = "Centros Comerciales",
                 clase = ClaseCategoria.CentroComercial,
                 image = R.drawable.anec_blau_12
+            ),
+            Categoria(
+                nombre = "Parques",
+                clase = ClaseCategoria.Parques,
+                image = R.drawable.parques
             )
         )
     }
@@ -32,8 +37,14 @@ object DataClass {
             Actividad(
                 imagen = R.drawable.centro_comercial_berceo_6,
                 descripcion = "",
-                titulo = "",
+                titulo = "Centro comercial",
                 categoria = categorias().filter { it.clase == ClaseCategoria.CentroComercial }.first()
+            ),
+            Actividad(
+                imagen = R.drawable.ribera,
+                descripcion = "Un parque precioso",
+                titulo = "Parque la ribera",
+                categoria = categorias().filter { it.clase == ClaseCategoria.Parques }.first()
             )
         )
     }

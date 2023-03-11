@@ -1,10 +1,10 @@
 package com.example.mycity.ui;
 
 import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -16,7 +16,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mycity.R
 
@@ -70,25 +72,27 @@ fun vistaMovil(
             onTapBackButton = { viewModel.irACategorias() },
             onTapActivity = { viewModel.cambiarActividad(it) })
     } else if (uiState.pantallaActual == Pantalla.actividad) {
-        showActividad(actividad = uiState.actividadActual)
+        showActividad(actividad = uiState.actividadActual, onTapBackButton = {viewModel.irACategorias()})
     }
 }
 
 @Composable
-fun vistaTablet(viewModel: CityViewModel) {
+fun vistaTablet(viewModel: CityViewModel, modifier: Modifier =Modifier) {
     val uiState by viewModel.uiState.collectAsState()
     Row {
         showCategorias(
             categorias = viewModel.getCategorias(),
-            onClick = { viewModel.updateCategory(it) })
+            onClick = { viewModel.updateCategory(it) },
+        modifier = modifier.weight(3f))
         showActividades(
             categoria = uiState.currentCategory,
             actividades = viewModel.getActividades(),
             onTapBackButton = { },
             onTapActivity = {viewModel.cambiarActividad(it)},
-            showbackButton = false
+            showbackButton = false,
+            modifier = modifier.weight(3f)
         )
-        showActividad(actividad = uiState.actividadActual)
+        showActividad(actividad = uiState.actividadActual, onTapBackButton = {}, modifier = modifier.weight(3f))
     }
 }
 
@@ -98,14 +102,20 @@ fun showCategorias(
     modifier: Modifier = Modifier,
     onClick: (Categoria) -> Unit
 ) {
-    LazyColumn(modifier = modifier) {
-        items(categorias, key = { cat -> cat.id }) { categoria ->
-            Card(modifier.clickable { onClick(categoria) }) {
-                Row {
-                    Image(
-                        painter = painterResource(categoria.image),
-                        contentDescription = categoria.nombre
-                    )
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Categorias", style = MaterialTheme.typography.h2)
+        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally){
+            items(categorias) { categoria ->
+                Card(modifier.clickable { onClick(categoria) }) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            painter = painterResource(categoria.image),
+                            contentDescription = categoria.nombre,
+                            modifier = Modifier.size(100.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                        Text(text = categoria.nombre, style = MaterialTheme.typography.h6)
+                    }
                 }
             }
         }
@@ -122,6 +132,7 @@ fun showActividades(
     showbackButton: Boolean = true
 ) {
     Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(20.dp))
         if (showbackButton) {
             Row {
                 IconButton(onClick = onTapBackButton) {
@@ -130,19 +141,27 @@ fun showActividades(
                 Text(categoria.nombre)
             }
         }
-        Image(
-            painter = painterResource(id = categoria.image),
-            contentDescription = categoria.nombre
-        )
-        LazyColumn() {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 2.dp)) {
+            Image(
+                painter = painterResource(id = categoria.image),
+                contentDescription = categoria.nombre,
+                modifier = Modifier.size(100.dp)
+            )
+            Spacer(modifier = Modifier.width(3.dp))
+            Text("Actividades: ${categoria.nombre}")
+        }
+        Divider(thickness = 2.dp)
+        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(actividades) { actividad ->
-                Row(modifier = modifier.clickable { onTapActivity(actividad) }) {
+                Row(modifier = modifier.clickable { onTapActivity(actividad) },
+                    verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(actividad.imagen),
-                        contentDescription = actividad.titulo
+                        contentDescription = actividad.titulo,
+                        modifier = Modifier.size(100.dp)
                     )
-                    Text(text = actividad.titulo, style = MaterialTheme.typography.h1)
-                    Text(text = actividad.descripcion)
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(text = actividad.titulo, style = MaterialTheme.typography.h6)
                 }
             }
         }
@@ -152,14 +171,19 @@ fun showActividades(
 @Composable
 fun showActividad(
     actividad: Actividad,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTapBackButton: () -> Unit
 ) {
+    BackHandler {
+        onTapBackButton()
+    }
+    Spacer(modifier = Modifier.height(5.dp))
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = actividad.imagen),
             contentDescription = actividad.titulo
         )
-        Text(text = actividad.titulo, style = MaterialTheme.typography.h1)
+        Text(text = actividad.titulo, style = MaterialTheme.typography.h4)
         Text(text = actividad.categoria.nombre)
     }
 }

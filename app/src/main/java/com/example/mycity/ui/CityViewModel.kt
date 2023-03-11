@@ -20,9 +20,10 @@ class CityViewModel : ViewModel(){
     val uiState: StateFlow<uiState> = _uiState
 
     fun getActividades(): List<Actividad>{
-        return DataClass.getActividades().filter {
-            it.categoria == _uiState.value.currentCategory
+        val l = DataClass.getActividades().filter {
+            it.categoria.clase == _uiState.value.currentCategory.clase
         }
+        return l
     }
 
     fun getCategorias(): List<Categoria>{
@@ -41,7 +42,7 @@ class CityViewModel : ViewModel(){
     fun updateCategory(categoria: Categoria){
         _uiState.update {
             it.copy(currentCategory = categoria,
-            pantallaActual = Pantalla.actividad)
+            pantallaActual = Pantalla.Actividades)
         }
     }
 
